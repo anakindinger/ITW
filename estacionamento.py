@@ -73,7 +73,10 @@ class Vaga:
 
     #@Property
     def definir_tipo(self, nome_tipo):
-        self.tipo = nome_tipo    
+        self.tipo = nome_tipo
+
+    def __str__(self):
+        return f'dsfnsdl'
 
 
 class Veiculo:
@@ -150,7 +153,7 @@ while True:
 
     elif opcao == '4':#remover veiculo
         placa = input('Digite a placa do veículo que vai sair da vaga: ')
-        vagas[estacionamento.encontrar_veiculo(placa, vagas)].desocupar
+        vagas[estacionamento.encontrar_veiculo(placa, vagas)].desocupar()
 
         
 
@@ -158,7 +161,8 @@ while True:
 
         
 
-    elif opcao == '5':
+    elif opcao == '5':#pesquisar veiculo
+
         continue
 
     elif opcao == '0':
