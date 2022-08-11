@@ -21,8 +21,8 @@ class Estacionamento:
         self.vagas_de_carro = vc
         self.vagas_de_moto = vm
         
-    def estacionar_carro(vaga, veiculo):
-        for i in vaga:
+    def estacionar_carro(self, vaga, veiculo):
+        for i in range(0, len(vaga)):
             if vaga[i].livre == True:
                 vaga[i].ocupar(veiculo)
                 veiculo.estacionar()
@@ -31,8 +31,8 @@ class Estacionamento:
                 print ('Não há vagas disponíveis')
         
 
-    def estacionar_moto(vaga, veiculo):
-        for i in vaga:
+    def estacionar_moto(self, vaga, veiculo):
+        for i in range(0,len(vaga)):
             if vaga[i].livre == True and vaga[i].tipo == 'Moto':
                 vaga[i].ocupar(veiculo)
                 break
@@ -42,11 +42,11 @@ class Estacionamento:
             else:
                 print ('Não há vagas disponíveis')
         
-    def remover_veiculo(i, vaga):
+    def remover_veiculo(self, i, vaga):
         vaga[i].desocupar()
 
-    def encontrar_veiculo(placa, vagas):
-        for i in range(0, vagas.len()):
+    def encontrar_veiculo(self, placa, vagas):
+        for i in range(0, len(vagas)):
             if placa == vagas[i].veiculo.placa:
                 return i
             else:
@@ -76,7 +76,7 @@ class Vaga:
         self.tipo = nome_tipo
 
     def __str__(self):
-        return f'dsfnsdl'
+        return f'Id da vaga: {self.id}, Tipo da vaga: {self.tipo}, Vaga está livre? {self.livre}, Veículo que ocupa a vaga: {self.veiculo}'
 
 
 class Veiculo:
@@ -96,7 +96,7 @@ class Veiculo:
         self.estacionado = False
 
     def __str__(self):
-        return f'Placa do carro: {self.placa}, estacionado? {self.estacionado}'
+        return f'Placa do veiculo: {self.placa}, Tipo do veículo: {self._tipo}  Está estacionado? {self.estacionado}'
 
 #inicializando o estacionamento com a quantidade de vagas para cada tipo de veículo
 estacionamento = Estacionamento(int(input("Digite a quantidade de vagas de carro: ")), int(input("Digite a quantidade de vagas de moto: ")))
@@ -118,11 +118,11 @@ veiculos = []
 
 while True:
 
-    print('1 - cadastrar veículo:')
-    print('2 - Estacionar carro: ')
-    print('3 - Estacionar moto: ')
-    print('4 - Remover veiculo: ')
-    print('5 - Pesquisar veículo')
+    print('1 - cadastrar veículo  ')
+    print('2 - Estacionar carro  ')
+    print('3 - Estacionar moto  ')
+    print('4 - Remover veiculo  ')
+    print('5 - Exibir status do estacionamento  ')
     print('0 - Sair')
     opcao = input('Digite a opção desejada: ')
 
@@ -131,7 +131,7 @@ while True:
         placa = input('Digite a placa: ')
         while True:
             tipo = input('Digite o tipo [Carro/Moto]:')
-            if placa != 'Carro' or placa != 'Moto':
+            if tipo != 'Carro' and tipo != 'Moto':
                 print('Tipo inválido!')
             else:
                 break    
@@ -139,13 +139,17 @@ while True:
         #print(veiculos[-1])
         
     elif opcao == '2':#estacionar carro
-        if veiculos[-1]._tipo == 'Carro':
+        if veiculos == []:
+                print('Não há veículos cadastrados')
+        elif veiculos[-1]._tipo == 'Carro':
             estacionamento.estacionar_carro(vagas, veiculos[-1])
         else:
             print('Veículo não é carro, digite a opção correta') 
     
     elif opcao == '3':#estacionar moto
-        if veiculos[-1].tipo == 'Moto':
+        if veiculos == []:
+            print('Não há veículos cadastrados')
+        elif veiculos[-1]._tipo == 'Moto':
             estacionamento.estacionar_moto(vagas, veiculos[-1])
         else:
             print('Veículo não é moto, digite a opção correta')
@@ -153,17 +157,12 @@ while True:
 
     elif opcao == '4':#remover veiculo
         placa = input('Digite a placa do veículo que vai sair da vaga: ')
-        vagas[estacionamento.encontrar_veiculo(placa, vagas)].desocupar()
+        vagas[estacionamento.encontrar_veiculo(placa, vagas)].desocupar(estacionamento.encontrar_veiculo(placa, vagas))
+        veiculos.pop(estacionamento.encontrar_veiculo(placa, vagas))
 
-        
-
-
-
-        
-
-    elif opcao == '5':#pesquisar veiculo
-
-        continue
+    elif opcao == '5':#mostrar vagas e veiculos
+        for each in vagas:
+            print(vagas)
 
     elif opcao == '0':
         break
