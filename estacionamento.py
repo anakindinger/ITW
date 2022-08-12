@@ -71,7 +71,7 @@ class Vaga:
             self.livre = True
             self.veiculo = ''
 
-    #@Property
+    # @property
     def definir_tipo(self, nome_tipo):
         self.tipo = nome_tipo
 
@@ -115,7 +115,7 @@ for i in range(0,estacionamento.vagas_de_moto-1):
     vagas[i].definir_tipo('Moto')
 
 for i in range(estacionamento.vagas_de_moto, estacionamento.vagas_de_moto + estacionamento.vagas_de_carro - 1):
-    vagas[i].definir_tipo('carro')
+    vagas[i].definir_tipo('Carro')
 
 while True:
 
@@ -163,8 +163,8 @@ while True:
         
 
     elif opcao == '5':#mostrar vagas e veiculos
-        for each in vagas:
-            print(vagas)
+        for i in range(0,len(vagas)):
+            print(vagas[i])
 
     elif opcao == '0':
         break
