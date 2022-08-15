@@ -22,11 +22,34 @@ import uuid
 
 class Banco:
     def __init__(self):
-        self.conta_comum = Conta()
-        self.conta_especial = ContaEspecial()
-        self.clientes = Cliente()
+        self.conta_comum = []
+        self.conta_especial = []
+        self.cliente = []
 
- class Cliente:
+    def procurar_cliente(self, nome):
+        for i in range(0,len(self.cliente)):
+            if self.cliente[i].nome == nome:
+                return i
+            else:
+                print('Cliente não encontrado')
+
+    def procurar_conta_comum(self, nome):
+        for i in range(0,len(self.conta_comum)):
+            for j in range(0, len(self.conta_comum[i].cliente[j])):
+                if self.conta_comum[i].cliente[j].nome == nome:
+                    return i
+            else:
+                print('Cliente não encontrado')
+
+    def procurar_conta_especial(self, nome):
+        for i in range(0,len(self.conta_especial)):
+            for j in range(0, len(self.conta_especial[i].cliente[j])):
+                if self.conta_especial[i].cliente[j].nome == nome:
+                    return i
+            else:
+                print('Cliente não encontrado')                        
+
+class Cliente:
     def __init__(self, nome, telefone, sexo, renda_mensal):
         self._nome = nome
         self.telefone = telefone
@@ -49,33 +72,36 @@ class Banco:
         elif op == 3:
             self.renda_mensal = float(dado)
 
-
-
 class Conta:
     def __init__(self, cliente):
         self.id_conta: uuid()
-        self.clientes = Cliente()
+        self.cliente = cliente
+        self.saldo = 0.00
 
     def sacar(self, valor):
-        return 0
+        if self.saldo >= valor:
+            self.saldo -= valor
+        else:
+            print('Saldo insuficiente.')   
 
     def depositar(self, valor):
-        return 0
+        self.saldo += valor
 
     def mostrar_saldo(self):
-        return 0
+        return self.saldo
 
 class ContaEspecial(Conta):
     def __init__(self, cliente):
         super().__init__(cliente)
 
-    def sacar(self):
-        return 0
+    def sacar(self, valor):
+        if (self.saldo - valor) >= -(self.cliente[0].renda_mensal):
+            self.saldo -= valor
+        else:
+            print('Saldo insuficiente.')
 
 
-contas = []
-contas_especiais = []
-clientes = []
+
 banco_delas = Banco()
 
 while True:
@@ -84,8 +110,9 @@ while True:
         1 - Cadastrar cliente
         2 - Alterar dados de cliente
         3 - Vincular nova conta
-        4 - Exibir operações de conta
-        5 - Encerrar conta
+        4 - Vincular novo titular
+        5 - Exibir operações de conta
+        6 - Encerrar conta
         '''
     )
     opcao = int(input('\nDigite a opção desejada: '))
@@ -101,9 +128,9 @@ while True:
                 break
         renda_mensal = float(input('Digite a renda mensal do cliente:'))
         
-        clientes.append(Cliente(nome, telefone, sexo, renda_mensal))
+        banco_delas.cliente.append(Cliente(nome, telefone, sexo, renda_mensal))
 
-    elif opcao == 2:
+    elif opcao == 2: #ALTERAR DADOS DE CLIENTE
         while True:
             operacao_atualizar = int(input('\nDigite a opção desejada: '))
             print(
@@ -115,14 +142,45 @@ while True:
                     0 - Sair
                 '''
             )
+            nome_procurar = input('Qual é o nome do cliente que deseja atualizar? ')
+            if banco_delas.procurar_cliente(nome_procurar):
+                id_cadastro = banco_delas.procurar_cliente(nome_procurar)
+                dado_atualizar = input('Digite o dado para atualizar:')
+            else:
+                print('Não foi possível encontrar o cliente')
 
-            if operacao_atualizar == range(1,3):
-               clientes[cliente]
+           
+            if operacao_atualizar >= 1 and operacao_atualizar < 4:
+               banco_delas.cliente[id_cadastro].atualizar_cadastro(operacao_atualizar, dado_atualizar)
             
-            elif else:
-                print('Operação inválida, digite novamente.')
+            elif operacao_atualizar == 0:
+                break
+                
+            else:
+              print('Operação inválida, digite novamente.')
+
+    elif opcao == 3:#VINCULAR NOVA CONTA
+        nome_procurar = input('Qual é o nome do cliente que deseja vincular? ')
+        if banco_delas.procurar_cliente(nome_procurar):
+            id_cadastro = banco_delas.procurar_cliente(nome_procurar)
+            if banco_delas.cliente[id_cadastro].sexo == 'F':
+                banco_delas.conta_especial.append(ContaEspecial(banco_delas.cliente[id_cadastro]))
+            elif banco_delas.cliente[id_cadastro].sexo == 'M':
+                banco_delas.conta_comum.append(Conta(banco_delas.cliente[id_cadastro]))
+            else:
+                print('Não foi possível vincular a conta, certifique-se de que os dados do cliente estão corretos e o cliente foi cadastrado')   
+        else:
+            print('Não foi possível encontrar o cliente')
+
         
-    elif opcao == 4:
+    elif opcao == 4:#VINCULAR NOVO TITULAR
+        tipo_conta = input('Digite o tipo de conta [Comum/Especial]: ')
+        titular_procurar = input('Qual é o 1º titular da conta deseja vincular? ')
+        
+        
+        
+
+    elif opcao == 5:#EXIBIR OPERAÇÕES DE CONTA
         while True:
             print(
                 '''
@@ -133,15 +191,54 @@ while True:
                 '''
             )
             operacao_conta = int(input('\nDigite a operacao desejada: '))
-            
-            if operacao_conta == 0:
+            tipo_conta = input('Digite o tipo de conta [Comum/Especial]: ')
+            titular_procurar = input('Qual é o nome do cliente que fará movimentação? ')
+                        
+            if operacao_conta == 1:
+                if tipo_conta == 'Comum':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_comum(titular_procurar)].mostrar_saldo()
+                elif tipo_conta == 'Especial':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_especial(titular_procurar)].mostrar_saldo()
+                else:
+                    print('Tipo de conta inválido')
+
+            elif operacao_conta == 2:
+                valor_saque = input(float('Insira o valor que deseja sacar: '))
+                if tipo_conta == 'Comum':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_comum(titular_procurar)].sacar(valor_saque)
+                elif tipo_conta == 'Especial':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_especial(titular_procurar)].sacar(valor_saque)
+                else:
+                    print('Tipo de conta inválido')        
+
+            elif operacao_conta == 3:
+                valor_deposito = input(float('Insira o valor que deseja depositar: '))
+                if tipo_conta == 'Comum':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_comum(titular_procurar)].sacar(valor_deposito)
+                elif tipo_conta == 'Especial':
+                    banco_delas.conta_comum[banco_delas.procurar_conta_especial(titular_procurar)].sacar(valor_deposito)
+                else:
+                    print('Tipo de conta inválido')
+
+            elif operacao_conta == 0:
                 break
+
             else:
-                print('Operação inválida, digite novamente.')
+                print('Opção de operação inválida, digite novamente.')            
+                
     
-    
-
-
+    elif opcao == 6:#ENCERRAR CONTA
+        
+        tipo_conta = input('Digite o tipo de conta [Comum/Especial]: ')
+        titular_procurar = input('Qual é o 1º titular da conta deseja encerrar? ')
+        if tipo_conta == 'Comum':
+            banco_delas.conta_comum.pop(banco_delas.procurar_conta_comum(titular_procurar))
+            print('Conta encerrada com sucesso!')
+        elif tipo_conta == 'Especial':
+            banco_delas.conta_especial.pop(banco_delas.procurar_conta_especial(titular_procurar))
+            print('Conta encerrada com sucesso!')
+        else:
+            print('Conta não localizada')
 
 
     if opcao == 0:
